@@ -4,6 +4,10 @@ This module will build and put a sitemap at `/sitemap.xml` using a combination o
 # Installation
 
 `yarn add nuxt-mapple`
+
+Add the module to your `nuxt.config.ts`:
+`modules: ['nuxt-mapple'],`
+
 # Usage
 
 ### Static Paths
