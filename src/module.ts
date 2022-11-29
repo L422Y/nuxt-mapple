@@ -82,25 +82,23 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || []
     nuxt.options.nitro.publicAssets.push({ baseURL: '/', dir: dirname(filePath) })
 
-    nuxt.hook('vite:serverCreated', (vite, env) => {
-      if (env.isServer) {
-        const sitemapRoutesOrig: string[] = pages.map(route => route.path)
-        sitemapRoutes = sitemapRoutesOrig.filter(r => !r.includes(':'))
-        sitemapRoutes = [...sitemapRoutes, ...options?.staticRoutes].filter(v => !!v)
-        const generator = new SiteMapGenerator(options?.dynamicRoutes, options.basePath)
-        generator.pushPaths(contentPaths)
-        generator.pushPaths(sitemapRoutes)
-        const sitemap = generator.getSiteMap()
+    nuxt.hook('build:done', () => {
+      const sitemapRoutesOrig: string[] = pages.map(route => route.path)
+      sitemapRoutes = sitemapRoutesOrig.filter(r => !r.includes(':'))
+      sitemapRoutes = [...sitemapRoutes, ...options?.staticRoutes].filter(v => !!v)
+      const generator = new SiteMapGenerator(options?.dynamicRoutes, options.basePath)
+      generator.pushPaths(contentPaths)
+      generator.pushPaths(sitemapRoutes)
+      const sitemap = generator.getSiteMap()
 
-        mkdirSync(dirname(filePath), { recursive: true })
-        writeFileSync(filePath, sitemap)
-        // @ts-ignore
-        console.log(`🌐️Sitemap created (${generator.urlCount} URLs${generator.urlCount === 0 ? '... did you forget your config?' : ''})`)
-        if (options.verbose) {
-          console.log('-----------------------')
-          console.log(sitemapRoutes.join('\r\n'))
-          console.log('-----------------------')
-        }
+      mkdirSync(dirname(filePath), { recursive: true })
+      writeFileSync(filePath, sitemap)
+      // @ts-ignore
+      console.log(`🌐️Sitemap created (${generator.urlCount} URLs${generator.urlCount === 0 ? '... did you forget your config?' : ''})`)
+      if (options.verbose) {
+        console.log('-----------------------')
+        console.log(sitemapRoutes.join('\r\n'))
+        console.log('-----------------------')
       }
     })
     nuxt.hook('pages:extend', (pagesExtend) => {
