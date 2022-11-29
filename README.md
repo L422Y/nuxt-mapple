@@ -204,3 +204,10 @@ defineNuxtConfig({
 ## Development
 
 - Run `npm run dev:prepare` to generate type stubs.
+
+## Credits
+
+Made with 💚 by [Larry Williamson](https://l422y.com) / [@l422y](https://twitter.com/l422y)
+
+Ideated from @benoitdemaegdt's [nuxt3-sitemap](https://github.com/benoitdemaegdt/nuxt3-sitemap)
+
