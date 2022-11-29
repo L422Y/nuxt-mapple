@@ -1,8 +1,12 @@
 # Nuxt: Mapple - A Sitemap Generator
 
-This module will build and put a sitemap at `/sitemap.xml` using a combination of optional static, dynamic, and generated routes. All pages without parameters in their paths will be inserted automatically (i.e. `pages/blog.vue`)
+This module will build and put a sitemap at `/sitemap.xml` using a combination of optional static, dynamic, and generated routes. All pages without parameters in their paths will be inserted automatically (i.e. `pages/blog.vue`), and when `useContent` is enabled, the `content` folder is scanned for `.md` files, and added to the sitemap.
+# Installation
 
+`yarn add nuxt-mapple`
 # Usage
+
+### Static Paths
 
 You can list static paths manually in your `nuxt.config.ts`, in an array of relative paths:
 ```js
@@ -18,8 +22,21 @@ defineNuxtConfig({
    }
 })
 ```
+### Content Directory
+or enable scanning of your `content` folder for `.md` files by enabling `useContent` and, optionally, including a filter for paths to exclude (example below will exclude `/references/*`):
+```js
+defineNuxtConfig({
+   mapple: {
+     basePath: 'https://l422y.com',
+     useContent: true,
+     excludeContent: /^\/(references\/).*/,
+   }
+})
+```
 
-... or you can build based on route templates and datasets, using multi-depth arrays, i.e. a route template of `/@/@` and a dataset like the following:
+### Build using templates and datasets
+
+... or you can build based on route templates and datasets, using multi-dimensional arrays, i.e. a route template of `/@/@` and a dataset like the following:
 ```js
 [
   ['blog', ['post-a','post-b','post-c']],
@@ -209,5 +226,5 @@ defineNuxtConfig({
 
 Made with 💚 by [Larry Williamson](https://l422y.com) / [@l422y](https://twitter.com/l422y)
 
-Ideated from @benoitdemaegdt's [nuxt3-sitemap](https://github.com/benoitdemaegdt/nuxt3-sitemap)
+Originally ideated from @benoitdemaegdt's [nuxt3-sitemap](https://github.com/benoitdemaegdt/nuxt3-sitemap)
 
