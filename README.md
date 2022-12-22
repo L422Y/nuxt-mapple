@@ -1,4 +1,5 @@
 # Nuxt: Mapple - A Sitemap Generator
+![npm](https://img.shields.io/npm/dt/nuxt-mapple)
 
 This module will build and put a sitemap at `/sitemap.xml` using a combination of optional static, dynamic, and generated routes. All pages without parameters in their paths will be inserted automatically (i.e. `pages/blog.vue`), and when `useContent` is enabled, the `content` folder is scanned for `.md` files, and added to the sitemap.
 # Installation
