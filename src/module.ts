@@ -1,8 +1,8 @@
-import { mkdirSync, readdirSync, statSync, writeFileSync } from 'fs'
-import { dirname, join } from 'path'
-import { createResolver, defineNuxtModule } from '@nuxt/kit'
-import { NuxtPage } from '@nuxt/schema'
-import { MappleDynamicRoute, SiteMapGenerator } from './SiteMapGenerator'
+import { mkdirSync, readdirSync, statSync, writeFileSync } from "fs"
+import { dirname, join } from "path"
+import { createResolver, defineNuxtModule } from "@nuxt/kit"
+import { NuxtPage } from "@nuxt/schema"
+import { MappleDynamicRoute, SiteMapGenerator } from "./SiteMapGenerator"
 
 // @ts-ignore
 
@@ -31,13 +31,13 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'nuxt-mapple',
-    version: '0.0.1',
-    configKey: 'mapple',
-    compatibility: { nuxt: '^3.0.0' }
+    name: "nuxt-mapple",
+    version: "0.0.1",
+    configKey: "mapple",
+    compatibility: {nuxt: "^3.0.0"}
   },
   defaults: {
-    basePath: '',
+    basePath: "",
     dynamicRoutes: [] as MappleDynamicRoute[],
     staticRoutes: [] as string[],
     verbose: false,
@@ -53,21 +53,19 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     const filePath = resolver.resolve(
       nuxt.options.srcDir,
-      'node_modules/.cache/.sitemap/sitemap.xml'
+      "node_modules/.cache/.sitemap/sitemap.xml"
     )
 
     if (options.useContent) {
       // scan the content directory
       const dir = resolver.resolve(
         nuxt.options.srcDir,
-        'content'
+        "content"
       )
-      const contentPath = join(nuxt.options.srcDir, 'content')
+      const contentPath = join(nuxt.options.srcDir, "content")
       const files = lsDir(dir) || []
-      contentPaths = files.filter((el) => {
-        return el.indexOf(/(\.md$|[[\]:])/)
-      }).map((el) => {
-        return el.replace(contentPath, '').replace(/\.md$/, '')
+      contentPaths = files.filter(el => el.match(/\/[^.]*(\.md$|[[\]:])/)).map((el) => {
+        return el.replace(contentPath, "").replace(/\.md$/, "")
       })
 
       // filter out unwanted content paths
@@ -80,28 +78,28 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || []
-    nuxt.options.nitro.publicAssets.push({ baseURL: '/', dir: dirname(filePath) })
+    nuxt.options.nitro.publicAssets.push({baseURL: "/", dir: dirname(filePath)})
 
-    nuxt.hook('build:done', () => {
+    nuxt.hook("build:done", () => {
       const sitemapRoutesOrig: string[] = pages.map(route => route.path)
-      sitemapRoutes = sitemapRoutesOrig.filter(r => !r.includes(':'))
+      sitemapRoutes = sitemapRoutesOrig.filter(r => !r.includes(":"))
       sitemapRoutes = [...sitemapRoutes, ...options?.staticRoutes].filter(v => !!v)
       const generator = new SiteMapGenerator(options?.dynamicRoutes, options.basePath)
       generator.pushPaths(contentPaths)
       generator.pushPaths(sitemapRoutes)
       const sitemap = generator.getSiteMap()
 
-      mkdirSync(dirname(filePath), { recursive: true })
+      mkdirSync(dirname(filePath), {recursive: true})
       writeFileSync(filePath, sitemap)
       // @ts-ignore
-      console.log(`🌐️Sitemap created (${generator.urlCount} URLs${generator.urlCount === 0 ? '... did you forget your config?' : ''})`)
+      console.log(`🌐️ Sitemap created (${generator.urlCount} URLs${generator.urlCount === 0 ? "... did you forget your config?" : ""})`)
       if (options.verbose) {
-        console.log('-----------------------')
-        console.log(sitemapRoutes.join('\r\n'))
-        console.log('-----------------------')
+        console.log("-----------------------")
+        console.log(sitemapRoutes.join("\r\n"))
+        console.log("-----------------------")
       }
     })
-    nuxt.hook('pages:extend', (pagesExtend) => {
+    nuxt.hook("pages:extend", (pagesExtend) => {
       pages.concat(pagesExtend)
     })
   }
