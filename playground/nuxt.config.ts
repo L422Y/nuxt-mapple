@@ -1,4 +1,12 @@
 export default defineNuxtConfig({
   modules: ['../src/module'],
-  myModule: {}
+  ssr: true,
+  mapple: {
+    useContent: true,
+    verbose: true,
+
+    staticRoutes: [
+      "/some-other-route"
+    ]
+  }
 })
