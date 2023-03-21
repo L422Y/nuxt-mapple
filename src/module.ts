@@ -6,10 +6,10 @@ import { MappleDynamicRoute, SiteMapGenerator } from "./SiteMapGenerator"
 
 // @ts-ignore
 
-const lsDir = function (dir, files = []) {
+const lsDir = function (dir, files: string[] = []) {
   if (statSync(dir).isDirectory()) {
     readdirSync(dir).forEach((file) => {
-      const absolute = join(dir, file)
+      const absolute: string = join(dir, file)
       if (statSync(absolute).isDirectory()) {
         return lsDir(absolute, files)
       } else {
@@ -47,8 +47,8 @@ export default defineNuxtModule<ModuleOptions>({
 
   setup: function (options, nuxt) {
     let sitemapRoutes: string[]
-    const pages = [] as NuxtPage[]
-    let contentPaths = []
+    let pages = [] as NuxtPage[]
+    let contentPaths: string[] = []
 
     const resolver = createResolver(import.meta.url)
     const filePath = resolver.resolve(
@@ -64,14 +64,14 @@ export default defineNuxtModule<ModuleOptions>({
       )
       const contentPath = join(nuxt.options.srcDir, "content")
       const files = lsDir(dir) || []
-      contentPaths = files.filter(el => el.match(/\/[^.]*(\.md$|[[\]:])/)).map((el) => {
+      contentPaths = files.filter(el => el.match(/\/[^.]*(\.md$|[[\]:])/)).map((el: string) => {
         return el.replace(contentPath, "").replace(/\.md$/, "")
       })
 
       // filter out unwanted content paths
       if (options.excludeContent) {
         contentPaths = contentPaths.filter((el) => {
-          const match = options.excludeContent.exec(el)
+          const match = options.excludeContent?.exec(el)
           return match === null
         })
       }
@@ -80,10 +80,13 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || []
     nuxt.options.nitro.publicAssets.push({baseURL: "/", dir: dirname(filePath)})
 
-    nuxt.hook("build:done", () => {
+    nuxt.hook("pages:extend", (pagesExtend) => {
+
+      pages = pages.concat(pagesExtend)
+
       const sitemapRoutesOrig: string[] = pages.map(route => route.path)
       sitemapRoutes = sitemapRoutesOrig.filter(r => !r.includes(":"))
-      sitemapRoutes = [...sitemapRoutes, ...options?.staticRoutes].filter(v => !!v)
+      sitemapRoutes = [...sitemapRoutes, ...options?.staticRoutes || []].filter(v => !!v)
       const generator = new SiteMapGenerator(options?.dynamicRoutes, options.basePath)
       generator.pushPaths(contentPaths)
       generator.pushPaths(sitemapRoutes)
@@ -95,12 +98,9 @@ export default defineNuxtModule<ModuleOptions>({
       console.log(`🌐️ Sitemap created (${generator.urlCount} URLs${generator.urlCount === 0 ? "... did you forget your config?" : ""})`)
       if (options.verbose) {
         console.log("-----------------------")
-        console.log(sitemapRoutes.join("\r\n"))
+        console.log(sitemap)
         console.log("-----------------------")
       }
-    })
-    nuxt.hook("pages:extend", (pagesExtend) => {
-      pages.concat(pagesExtend)
     })
   }
 })
