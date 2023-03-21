@@ -4,6 +4,7 @@
     "@nuxt/eslint-config"
   ],
   "rules": {
+    "no-useless-escape": "off",
     "prefer-const": "off"
   }
 }
