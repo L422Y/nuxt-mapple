@@ -38,7 +38,7 @@
     "changelogen": "^0.5.1",
     "eslint": "^8.36.0",
     "nuxt": "^3.3.1",
-    "vitest": "^0.29.3",
+    "vitest": "^0.29.3"
   },
   "keywords": [
     "nuxt",
