@@ -1,7 +1,7 @@
 {
   "name": "nuxt-mapple",
   "version": "1.0.0",
-  "description": "My new Nuxt module",
+  "description": "Nuxt Mapple: Sitemap Generator",
   "repository": "your-org/nuxt-mapple",
   "license": "MIT",
   "type": "module",
