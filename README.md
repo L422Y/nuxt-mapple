@@ -81,7 +81,7 @@ Our `sitemap.xml` will look like this:
 </urlset>
 ```
 
-## 
+##
 Here's a full configuration example:
 
 ```js
@@ -158,4 +158,3 @@ defineNuxtConfig({
 Made with 💚 by [Larry Williamson](https://l422y.com) / [@l422y](https://twitter.com/l422y)
 
 Originally ideated from @benoitdemaegdt's [nuxt3-sitemap](https://github.com/benoitdemaegdt/nuxt3-sitemap)
-
