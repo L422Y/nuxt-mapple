@@ -26,7 +26,7 @@ export interface ModuleOptions {
   verbose?: boolean,
   dynamicRoutes?: any | MappleDynamicRoute[],
   useContent?: boolean,
-  excludeContent?: undefined | RegExp,
+  excludeContent?: undefined | string,
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -70,10 +70,12 @@ export default defineNuxtModule<ModuleOptions>({
 
       // filter out unwanted content paths
       if (options.excludeContent) {
-        contentPaths = contentPaths.filter((el) => {
-          const match = options.excludeContent?.exec(el)
-          return match === null
-        })
+        try {
+          const excludeContentRegExp = new RegExp(options.excludeContent)
+          contentPaths = contentPaths.filter(el => !el.match(excludeContentRegExp))
+        } catch (err) {
+          console.error(err)
+        }
       }
     }
 
