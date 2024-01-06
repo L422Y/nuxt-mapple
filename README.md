@@ -34,7 +34,7 @@ defineNuxtConfig({
    mapple: {
      basePath: 'https://l422y.com',
      useContent: true,
-     excludeContent: /^\/(references\/).*/,
+     excludeContent: "^\/(references\/).*", // Regular Expression (with leading and trailing slashes)
    }
 })
 ```
