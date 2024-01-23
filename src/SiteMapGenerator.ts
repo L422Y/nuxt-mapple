@@ -8,59 +8,48 @@ export interface MappleDynamicRoute {
   data: undefined | string[] | MappleDynamicRoute[];
 }
 
+export interface SiteMapGeneratorOptions {
+  basePath?: string;
+  excludeAnyRegExp?: undefined | RegExp;
+}
+
 export class SiteMapGenerator {
-  // @ts-ignore
-  #urls: string[] = []
-  // @ts-ignore
-  #basePath = ""
+  urls: string[] = []
+  basePath = ""
+  excludeAnyRegExp?: undefined | RegExp
+
+  constructor(input: MappleDynamicRoute[], opts: SiteMapGeneratorOptions) {
+    this.basePath = opts.basePath || "/"
+    this.excludeAnyRegExp = opts.excludeAnyRegExp
+    for (const r of input) {
+      const genURLs: string[] = this.generateUrls(
+        r.route as string,
+        r.data
+      )
+      this.urls.push(...genURLs)
+    }
+  }
+
+  get urlCount() {
+    return this.urls.length
+  }
 
   getSiteMap() {
     return this.getXML()
   }
 
-  constructor(input: MappleDynamicRoute[], basePath = "") {
-    this.#basePath = basePath
-    for (const r of input) {
-      const genURLs: string[] = this.#generateUrls(
-        r.route as string,
-        r.data
-      )
-      this.#urls.push(...genURLs)
-    }
-  }
-
-  // @ts-ignore
-  #generateUrls(route: string, data: string[] | MappleDynamicRoute[] | undefined): string[] {
-    const urls = [] as string[]
-    if (data) {
-      for (const o of data) {
-        if (Array.isArray(o) && o.length > 1 && Array.isArray(o[1])) {
-          urls.push(...this.#generateUrls(route.replace("@", o[0]), o[1]))
-        } else if (typeof o === "string") {
-          urls.push(route.replace("@", o))
-        }
-      }
-    }
-    return urls
-  }
-
   pushPaths(paths: string[]) {
     for (const path of paths) {
-      this.#urls.push(`${path}`)
+      this.urls.push(`${path}`)
     }
   }
 
-  // @ts-ignore
-  get urlCount() {
-    return this.#urls.length
-  }
-
-  // @ts-ignore
   getXML(): string {
     // @ts-ignore
-    this.#urls = [...new Set(this.#urls)]
-    const items = `\t<url><loc>${this.#basePath}` +
-      this.#urls.join(`</loc></url>\n\t<url><loc>${this.#basePath}`) +
+    this.urls = [...new Set(this.urls)]
+      .filter((v) => this.excludeAnyRegExp?.test(v) !== true)
+    const items = `\t<url><loc>${this.basePath}` +
+      this.urls.join(`</loc></url>\n\t<url><loc>${this.basePath}`) +
       "</loc></url>"
 
     let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -68,5 +57,19 @@ export class SiteMapGenerator {
     xml += `${items}\n`
     xml += "</urlset>"
     return xml
+  }
+
+  generateUrls(route: string, data: string[] | MappleDynamicRoute[] | undefined): string[] {
+    const urls = [] as string[]
+    if (data) {
+      for (const o of data) {
+        if (Array.isArray(o) && o.length > 1 && Array.isArray(o[1])) {
+          urls.push(...this.generateUrls(route.replace("@", o[0]), o[1]))
+        } else if (typeof o === "string") {
+          urls.push(route.replace("@", o))
+        }
+      }
+    }
+    return urls
   }
 }
